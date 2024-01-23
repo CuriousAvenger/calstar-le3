@@ -1,0 +1,20 @@
+MacOSX
+1. follow steps from https://inst.eecs.berkeley.edu/~inst/ni/students/
+    1. Copy the 1 year serial number for student owned computers from https://inst.eecs.berkeley.edu/~inst/ni/students/
+    2. Download and install LabView for Mac from DVD ISO image: https://inst.eecs.berkeley.edu/~inst/ni/students/
+    3. You don't need to activate Labview for MacOS; it is installed with permanent license
+
+Windows
+1. Download the 2023 Q3 Labview from https://www.ni.com/en/support/downloads/software-products/download.labview.html
+    1. Make sure to download the 32-bit which is required for Arduino or ESP32 drivers
+    2. Choose the base, full, professional for the included editions and avoid installing offline
+2. Download the 2023 Q3 Labview Hobbist Toolkit from https://www.ni.com/en/support/downloads/tools-network/download.labview-hobbyist-toolkit.html
+    1. Download 32-bit and select all the default options during installation
+    2. Note that hobbyist doesn't have any options after installation: if it does ignore this steps
+3. Go to https://forums.ni.com/t5/Instrument-Control-GPIB-Serial/Hobbyist-toolkit-function-palette-missing-some-function/td-p/4333704
+    1. 2023 Q3 has an error with the hobbyist menus: download dir.zip from https://forums.ni.com/t5/Instrument-Control-GPIB-Serial/Hobbyist-toolkit-function-palette-missing-some-function/td-p/4333704
+    2. Extract and paste the dir.mnu file in C:\Program Files (x86)\National Instruments\LabVIEW 2023\menus\Categories\Hobbyist
+4. Restart your computer; hobbyist and labview should be installed on your computer; Note: labivew is not activated on windows yet
+    1. Open the NI License Manager that is locally installed in your computer and select "Activate software"
+    2. Select "Log in to Activate" (create NI User Account) and choose "Enter a serial number" in the dropdown
+    3. Download LabVIEW serial number from https://inst.eecs.berkeley.edu/~inst/ni/students/ and paste it in to activate it.
