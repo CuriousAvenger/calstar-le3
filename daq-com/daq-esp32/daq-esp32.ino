@@ -1,43 +1,49 @@
 #include <WiFi.h>
 
-const char* ssid = "Nice";
-const char* passwd = "piii4305";
+const char* ssid = "RPI-DAQ";
+const char* passwd = "password123";
 
-const char* ip_addr = "192.168.174.91";
+const char* ip_addr = "192.168.4.1";
 const int port_send = 4444;
 const int port_recv = 4445;
 
 void connect_to_wifi(const char* ssid, const char* password) {
+  int i = 0;
   WiFi.begin(ssid, password);
+  Serial.print("[SYSTEM] Waiting for Wifi to appear\n[");
   while (WiFi.status() != WL_CONNECTED) {
-    Serial.println("[SYSTEM] Waiting for Wifi to appear");
-    delay(1000);
+    i++;
+    Serial.print(".");
+    delay(100);
+    if (i>10) {
+      ESP.restart();
+    }
   }
-  Serial.print("[SYSTEM] Connected to WIFI with IP:");
+  Serial.print("\n[SYSTEM] Connected to WIFI with IP:");
   Serial.println(WiFi.localIP());
+  // print some information regarding the wifi here
 }
 
 void send(void *parameter) {
-  WiFiClient client_send;
   while (true) {
-    while (!client_send.connect(ip_addr, port_send)) {
-      Serial.println("[SEND] Waiting for COM Server to appear ");
-      delay(1000);
-    }
-    Serial.println("[SEND] DAQ-COM Connection Established");
+    WiFiClient client_send;
 
-    while (true) {
-      if (client_send.connected()) {
-        char buffer[32];
-        dtostrf(100, 5, 3, buffer);
-        client_send.write(buffer);
-      } else {
-        Serial.println("[SEND] COM Connection Reset");
-        break;
-      }
-      delay(50);
+    while (!client_send.connect(ip_addr, port_send)) {
+      Serial.println("[SEND] Waiting for DAQ-RPI Server to appear");
+      delay(100);
     }
-  } 
+    Serial.println("[SEND] DAQ-RPI Connection Established");
+
+    while (client_send.connected()) {
+      char buffer[64];
+      uint64_t time = esp_timer_get_time();
+      snprintf(buffer, sizeof(buffer), "%llu", time);
+      client_send.write(buffer);
+      delay(10);
+    }
+    client_send.stop(); // Close the WiFiClient and release associated resources
+    Serial.println("[SEND] DAQ-RPI Connection Reset");
+  }
 }
 
 void recv(void* parameter) {
@@ -49,11 +55,11 @@ void recv(void* parameter) {
 
   while (true) {
     while (!client_recv) {
-      Serial.println("[RECV] Waiting for COM Server to appear");
+      Serial.println("[RECV] Waiting for DAQ-RPI to Connect");
       client_recv = server.available();
-      delay(2000);
+      delay(100);
     }
-    Serial.println("[RECV] DAQ-COM Connection Established");
+    Serial.println("[RECV] DAQ-RPI Connection Established");
     
     if (client_recv) {
       while (client_recv.connected()) {
@@ -63,7 +69,7 @@ void recv(void* parameter) {
         }
       }
     } else {
-      Serial.println("[RECV] COM Connection Reset");
+      Serial.println("[RECV] DAQ-RPI Connection Reset");
       client_recv.stop();
     }
   }
